@@ -29,6 +29,9 @@ jobs:
           pip install -r requirements.txt
           playwright install --with-deps
 
-      - name: Run tests
-        run: pytest
+      - name: Run login acceptance
+        run: pytest Tests/test_login.py
+
+      - name: Run logged-in tests
+        run: pytest Tests/test_playwrightBasics.py
 

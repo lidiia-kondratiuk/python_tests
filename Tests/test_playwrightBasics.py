@@ -2,30 +2,16 @@ from playwright.sync_api import expect
 
 
 def test_create_new_memory(logged_page):
-    # 🔐 sanity-check: ми точно не на /signin
-    assert "/signin" not in logged_page.url
-
-    # 👉 йдемо напряму на сторінку створення
     logged_page.goto("https://www.ministryoftesting.com/memories/new")
-
-    # ⏳ чекаємо, поки форма гарантовано зʼявиться
     logged_page.wait_for_selector("#memory_content_title")
-
     title = "Hello, it is my new memory"
-
-    # ✍️ Title
     logged_page.locator("#memory_content_title").fill(title)
-
-    # ✍️ Commentary
     logged_page.locator("#memory_content_commentary").fill(
         "It is my test commentary for the new memory"
     )
-
-    # ✍️ Alt text
     logged_page.locator("#memory_content_description").fill(
         "Test text for the description")
 
-    # 👤 Contributor
     contributor = logged_page.get_by_role(
         "textbox", name="Who is in this memory?"
     )
