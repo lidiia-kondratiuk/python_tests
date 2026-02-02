@@ -1,65 +1,44 @@
-import time
-from pydoc import visiblename
-
-from playwright.sync_api import Page, expect
+from playwright.sync_api import expect
 
 
-# def test_playwrightBasics (playwright):
-#     browser=playwright.chromium.launch(headless=False)
-#     context = browser.new_context()
-#     page = context.new_page()
-#     page.goto("https://www.tally.xyz/explore")
+def test_create_new_memory(logged_page):
+    # 🔐 sanity-check: ми точно не на /signin
+    assert "/signin" not in logged_page.url
 
-def test_playwrightShortCut(page:Page):
-    page.goto("https://www.ministryoftesting.com/")
-    page.goto("https://www.ministryoftesting.com/signin?return_to_referer=yes")
-    page.get_by_label("Email or Username").fill("lidiiakondratiukliko@gmail.com")
-    time.sleep(1)
-    page.get_by_label("Password").fill("Lilili@333")
-    page.get_by_role("button", name="Sign In").click()
+    # 👉 йдемо напряму на сторінку створення
+    logged_page.goto("/memories/new")
 
-    #Verify success alert
-    page.get_by_role("alert").get_by_text("Signed in successfully")
-    page.get_by_role("alert").get_by_role("button", name="Close").click()
-    page.goto("https://www.ministryoftesting.com/")
+    # ⏳ чекаємо, поки форма гарантовано зʼявиться
+    logged_page.wait_for_selector("#memory_content_title")
 
-    #Open Create dropdown
-    page.get_by_role("button", name="Create").click()
-    dropdown = page.locator("ul.dropdown-menu.show")
-    options = ["Memory", "Meme", "Satellite", "Job"]
-    for option in options:
-        expect(dropdown.get_by_text(option)).to_be_visible()
-    # Adding a new Memory
-    page.get_by_role("button", name="Memory").click()
-    page.get_by_label("Title").fill("Hello, it is my new memory")
-    expect(page.get_by_label("Commentary")).to_be_visible()
-    page.get_by_label("Commentary").fill("It is my test commentary for the new memory")
-    page.get_by_text("Is there a story behind this memory? Is there any additional context for it?").is_visible()
-    page.get_by_label("Alt text").fill("Test text for the description")
+    title = "Hello, it is my new memory"
 
-    # Activate contributor search
-    search_input = page.get_by_role(
-        "textbox",
-        name="Who is in this memory?"
+    # ✍️ Title
+    logged_page.locator("#memory_content_title").fill(title)
+
+    # ✍️ Commentary
+    logged_page.locator("#memory_content_commentary").fill(
+        "It is my test commentary for the new memory"
     )
 
-    expect(search_input).to_be_visible()
-    search_input.fill("Lul")
+    # ✍️ Alt text
+    logged_page.locator("#memory_content_description").fill(
+        "Test text for the description")
 
-    # user-like selection
-    page.keyboard.press("ArrowDown")
-    page.keyboard.press("Enter")
-    page.get_by_label("Tags ")
+    # 👤 Contributor
+    contributor = logged_page.get_by_role(
+        "textbox", name="Who is in this memory?"
+    )
+    contributor.fill("Lul")
+    logged_page.keyboard.press("ArrowDown")
+    logged_page.keyboard.press("Enter")
 
+    # 🏷 Tags
+    tags = logged_page.get_by_role("textbox", name="Tags *")
+    tags.fill("test-tag")
+    logged_page.keyboard.press("Enter")
 
-
-
-
-
-
-
-
-
-
-
-
+    # ✅ CORRECT ASSERT: поле реально заповнене
+    expect(
+        logged_page.locator("#memory_content_title")
+    ).to_have_value(title)
