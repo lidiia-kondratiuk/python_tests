@@ -28,4 +28,7 @@ jobs:
           playwright install --with-deps
 
       - name: Run tests
+        env:
+          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
         run: pytest
