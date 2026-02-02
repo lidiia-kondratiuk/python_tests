@@ -6,7 +6,7 @@ def test_create_new_memory(logged_page):
     assert "/signin" not in logged_page.url
 
     # 👉 йдемо напряму на сторінку створення
-    logged_page.goto("/memories/new")
+    logged_page.goto("https://www.ministryoftesting.com/memories/new")
 
     # ⏳ чекаємо, поки форма гарантовано зʼявиться
     logged_page.wait_for_selector("#memory_content_title")

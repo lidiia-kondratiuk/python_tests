@@ -1,14 +1,19 @@
 import pytest
-from playwright.sync_api import Browser
+from pathlib import Path
 
+AUTH_STATE = Path("playwright/.auth/state.json")
 
 @pytest.fixture
-def logged_page(browser: Browser):
+def logged_page(browser):
+    if not AUTH_STATE.exists():
+        raise RuntimeError(
+            "Auth state file not found: playwright/.auth/state.json"
+        )
+
     context = browser.new_context(
-        storage_state="auth_state.json"
+        storage_state=str(AUTH_STATE)
     )
     page = context.new_page()
-
     yield page
-
     context.close()
+
