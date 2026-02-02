@@ -1,20 +1,14 @@
-import os
 import pytest
+from playwright.sync_api import Browser
 
-@pytest.fixture(scope="session")
-def logged_page(browser):
-    context = browser.new_context()
+
+@pytest.fixture
+def logged_page(browser: Browser):
+    context = browser.new_context(
+        storage_state="auth_state.json"
+    )
     page = context.new_page()
 
-    email = os.getenv("TEST_EMAIL")
-    password = os.getenv("TEST_PASSWORD")
-
-    page.goto("https://www.ministryoftesting.com/signin")
-    page.fill("input[name='user[email]']", email)
-    page.fill("input[name='user[password]']", password)
-    page.click("button[type='submit']")
-
-    page.wait_for_url("**/memories**")
-
     yield page
+
     context.close()
