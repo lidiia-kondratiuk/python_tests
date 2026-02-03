@@ -29,6 +29,10 @@ jobs:
           pip install -r requirements.txt
           playwright install chromium --with-deps
 
+      - name: Generate auth state
+        run: pytest Tests/save_auth_state.py
+
       - name: Run tests
         run: pytest
+
 
