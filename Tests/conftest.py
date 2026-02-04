@@ -14,3 +14,8 @@ def logged_page(browser):
 
     page.close()
     context.close()
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
