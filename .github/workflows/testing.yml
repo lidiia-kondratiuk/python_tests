@@ -12,6 +12,7 @@ jobs:
     env:
       TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
       TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      URL: ${{ secrets.URL }}
       CI: true
 
     steps:

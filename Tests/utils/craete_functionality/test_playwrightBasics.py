@@ -18,13 +18,10 @@ def test_create_new_memory(logged_page):
     contributor.fill("Lul")
     logged_page.keyboard.press("ArrowDown")
     logged_page.keyboard.press("Enter")
-
-    # 🏷 Tags
     tags = logged_page.get_by_role("textbox", name="Tags *")
     tags.fill("test-tag")
     logged_page.keyboard.press("Enter")
-
-    # ✅ CORRECT ASSERT: поле реально заповнене
     expect(
         logged_page.locator("#memory_content_title")
     ).to_have_value(title)
+
