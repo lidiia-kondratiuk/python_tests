@@ -1,5 +1,8 @@
 from playwright.sync_api import expect
 
+from Tests.conftest import logged_page
+from pathlib import Path
+import re
 
 def test_create_new_memory(logged_page):
     logged_page.goto("https://www.ministryoftesting.com/memories/new")
@@ -24,4 +27,16 @@ def test_create_new_memory(logged_page):
     expect(
         logged_page.locator("#memory_content_title")
     ).to_have_value(title)
+    logged_page.locator("#memory_content_image")
+    file_path = Path(__file__).resolve().parents[2] / "assets" / "images.png"
+    assert file_path.exists(), f"Test file not found: {file_path}"
+
+    file_input = logged_page.locator("#memory_content_image")
+    file_input.set_input_files(str(file_path))
+
+    expect(file_input).to_have_value(
+        re.compile(r".*images\.png")
+    )
+    logged_page.get_by_role("button", name="Save").click()
+    expect(logged_page).to_have_url("https://www.ministryoftesting.com/memories/new")
 
